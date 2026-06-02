@@ -1,8 +1,8 @@
 function launchConfetti() {
-    const confettiSettings = { 
-        particleCount: 100, 
-        spread: 70, 
-        origin: { y: 0.6 } 
+    const confettiSettings = {
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
     };
     confetti(confettiSettings);
 }

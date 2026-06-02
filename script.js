@@ -6,7 +6,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let gameColors = [];
     let score = 0;
+    let moves = 0;
+    let matchedPairs = 0;
     const scoreElement = document.getElementById('score');
+    const movesElement = document.getElementById('moves');
+    const winMessage = document.getElementById('win-message');
     const gameContainer = document.querySelector('.memory-game');
     const resetButton = document.getElementById('reset-btn');
 
@@ -14,14 +18,21 @@ document.addEventListener("DOMContentLoaded", () => {
         gameColors = [...colorsArray, ...colorsArray];
         shuffleArray(gameColors);
         score = 0;
+        moves = 0;
+        matchedPairs = 0;
         scoreElement.textContent = score;
+        movesElement.textContent = moves;
+        winMessage.style.display = 'none';
         gameContainer.innerHTML = '';
         generateCards();
         resetBoard();
     }
 
     function shuffleArray(array) {
-        array.sort(() => 0.5 - Math.random());
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
     }
 
     function generateCards() {
@@ -57,11 +68,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         secondCard = this;
+        lockBoard = true;
         checkForMatch();
     }
 
     function checkForMatch() {
-        let isMatch = firstCard.dataset.color === secondCard.dataset.color;
+        moves++;
+        movesElement.textContent = moves;
+
+        const isMatch = firstCard.dataset.color === secondCard.dataset.color;
 
         if (isMatch) {
             disableCards();
@@ -76,16 +91,18 @@ document.addEventListener("DOMContentLoaded", () => {
         firstCard.removeEventListener('click', flipCard);
         secondCard.removeEventListener('click', flipCard);
 
+        matchedPairs++;
+        if (matchedPairs === colorsArray.length) {
+            winMessage.style.display = 'block';
+        }
+
         resetBoard();
     }
 
     function unflipCards() {
-        lockBoard = true;
-
         setTimeout(() => {
             firstCard.classList.remove('flip');
             secondCard.classList.remove('flip');
-
             resetBoard();
         }, 1000);
     }
@@ -101,7 +118,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     resetButton.addEventListener('click', initGame);
-
 
     initGame();
 });
